@@ -1,0 +1,14 @@
+version: '3'
+services:
+  jenkins:
+    container_name: jenkins
+    image: jenkins/jenkins
+    ports:
+      - "3002:8080"
+    volumes:
+      - "$PWD/jenkins_data:/var/jenkins_inf_data"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    networks:
+      - net
+networks:
+  net:
