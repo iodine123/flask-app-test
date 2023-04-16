@@ -1,0 +1,235 @@
+Started by user iodine hanifan
+
+Obtained Jenkinsfile from git https://github.com/iodine123/flask-app-test.git
+[Pipeline] Start of Pipeline
+[Pipeline] node
+Running on Jenkins in /var/jenkins_home/workspace/pipeline-flask-app
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Declarative: Checkout SCM)
+[Pipeline] checkout
+Selected Git installation does not exist. Using Default
+The recommended git tool is: NONE
+No credentials specified
+Cloning the remote Git repository
+Cloning repository https://github.com/iodine123/flask-app-test.git
+ > git init /var/jenkins_home/workspace/pipeline-flask-app # timeout=10
+Fetching upstream changes from https://github.com/iodine123/flask-app-test.git
+ > git --version # timeout=10
+ > git --version # 'git version 2.30.2'
+ > git fetch --tags --force --progress -- https://github.com/iodine123/flask-app-test.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git config remote.origin.url https://github.com/iodine123/flask-app-test.git # timeout=10
+ > git config --add remote.origin.fetch +refs/heads/*:refs/remotes/origin/* # timeout=10
+Avoid second fetch
+ > git rev-parse refs/remotes/origin/master^{commit} # timeout=10
+Checking out Revision 71317ed87cc63bbb45500d0fb5efa0e597beb468 (refs/remotes/origin/master)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f 71317ed87cc63bbb45500d0fb5efa0e597beb468 # timeout=10
+Commit message: "Add Jenkinsfile"
+First time build. Skipping changelog.
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Pull Source Code)
+[Pipeline] sh
++ rm -rf flask-app-test
++ git clone https://github.com/iodine123/flask-app-test.git -b master
+Cloning into 'flask-app-test'...
++ cd flask-app-test
++ ls
+Dockerfile
+Jenkinsfile
+Procfile
+app.py
+docker-compose.yaml
+templates
+unit_test
+wsgi.py
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Unit Test)
+[Pipeline] sh
++ python3 -m unittest flask-app-test/unit_test/apitest.py
+...
+----------------------------------------------------------------------
+Ran 3 tests in 2.673s
+
+OK
+
+Test 200 ok !
+
+Test 404 ok !
+
+Test 401 ok !
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Build Image)
+[Pipeline] sh
++ docker build -t registry.heroku.com/flask-trial/web flask-app-test/.
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 30B
+#1 transferring dockerfile: 271B 0.1s done
+#1 DONE 0.6s
+
+#2 [internal] load .dockerignore
+#2 transferring context: 2B done
+#2 DONE 1.0s
+
+#3 [internal] load metadata for docker.io/library/alpine:latest
+#3 DONE 0.0s
+
+#4 [1/7] FROM docker.io/library/alpine:latest
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 39.90kB 0.1s done
+#5 DONE 0.4s
+
+#4 [1/7] FROM docker.io/library/alpine:latest
+#4 CACHED
+
+#6 [2/7] COPY . .
+#6 DONE 1.8s
+
+#7 [3/7] RUN apk add --no-cache --update python3 py3-pip bash
+#7 2.096 fetch https://dl-cdn.alpinelinux.org/alpine/v3.17/main/x86_64/APKINDEX.tar.gz
+#7 3.140 fetch https://dl-cdn.alpinelinux.org/alpine/v3.17/community/x86_64/APKINDEX.tar.gz
+#7 4.579 (1/20) Installing ncurses-terminfo-base (6.3_p20221119-r0)
+#7 4.644 (2/20) Installing ncurses-libs (6.3_p20221119-r0)
+#7 4.872 (3/20) Installing readline (8.2.0-r0)
+#7 5.082 (4/20) Installing bash (5.2.15-r0)
+#7 5.740 Executing bash-5.2.15-r0.post-install
+#7 5.763 (5/20) Installing libbz2 (1.0.8-r4)
+#7 5.830 (6/20) Installing libexpat (2.5.0-r0)
+#7 5.908 (7/20) Installing libffi (3.4.4-r0)
+#7 6.007 (8/20) Installing gdbm (1.23-r0)
+#7 6.067 (9/20) Installing xz-libs (5.2.9-r0)
+#7 6.162 (10/20) Installing libgcc (12.2.1_git20220924-r4)
+#7 6.239 (11/20) Installing libstdc++ (12.2.1_git20220924-r4)
+#7 6.709 (12/20) Installing mpdecimal (2.5.1-r1)
+#7 6.789 (13/20) Installing sqlite-libs (3.40.1-r0)
+#7 7.094 (14/20) Installing python3 (3.10.11-r0)
+#7 16.84 (15/20) Installing py3-six (1.16.0-r3)
+#7 16.88 (16/20) Installing py3-retrying (1.3.3-r3)
+#7 16.91 (17/20) Installing py3-parsing (3.0.9-r0)
+#7 17.05 (18/20) Installing py3-packaging (21.3-r2)
+#7 17.12 (19/20) Installing py3-setuptools (65.6.0-r0)
+#7 18.70 (20/20) Installing py3-pip (22.3.1-r1)
+#7 29.55 Executing busybox-1.35.0-r29.trigger
+#7 29.58 OK: 83 MiB in 35 packages
+#7 DONE 32.2s
+
+#8 [4/7] RUN pip install Flask
+#8 7.993 Collecting Flask
+#8 8.451   Downloading Flask-2.2.3-py3-none-any.whl (101 kB)
+#8 8.600      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 101.8/101.8 kB 764.4 kB/s eta 0:00:00
+#8 8.818 Collecting Jinja2>=3.0
+#8 8.859   Downloading Jinja2-3.1.2-py3-none-any.whl (133 kB)
+#8 8.993      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 133.1/133.1 kB 998.4 kB/s eta 0:00:00
+#8 9.201 Collecting Werkzeug>=2.2.2
+#8 9.237   Downloading Werkzeug-2.2.3-py3-none-any.whl (233 kB)
+#8 9.438      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 233.6/233.6 kB 1.2 MB/s eta 0:00:00
+#8 9.570 Collecting itsdangerous>=2.0
+#8 9.617   Downloading itsdangerous-2.1.2-py3-none-any.whl (15 kB)
+#8 9.857 Collecting click>=8.0
+#8 9.908   Downloading click-8.1.3-py3-none-any.whl (96 kB)
+#8 10.03      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 96.6/96.6 kB 820.0 kB/s eta 0:00:00
+#8 10.40 Collecting MarkupSafe>=2.0
+#8 10.46   Downloading MarkupSafe-2.1.2-cp310-cp310-musllinux_1_1_x86_64.whl (29 kB)
+#8 10.77 Installing collected packages: MarkupSafe, itsdangerous, click, Werkzeug, Jinja2, Flask
+#8 13.16 Successfully installed Flask-2.2.3 Jinja2-3.1.2 MarkupSafe-2.1.2 Werkzeug-2.2.3 click-8.1.3 itsdangerous-2.1.2
+#8 13.16 WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv
+#8 DONE 15.3s
+
+#9 [5/7] RUN pip install requests
+#9 4.808 Collecting requests
+#9 5.259   Downloading requests-2.28.2-py3-none-any.whl (62 kB)
+#9 5.471      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 62.8/62.8 kB 283.3 kB/s eta 0:00:00
+#9 5.699 Collecting certifi>=2017.4.17
+#9 5.734   Downloading certifi-2022.12.7-py3-none-any.whl (155 kB)
+#9 5.974      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 155.3/155.3 kB 673.8 kB/s eta 0:00:00
+#9 6.130 Collecting idna<4,>=2.5
+#9 6.175   Downloading idna-3.4-py3-none-any.whl (61 kB)
+#9 6.279      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 61.5/61.5 kB 585.2 kB/s eta 0:00:00
+#9 6.727 Collecting charset-normalizer<4,>=2
+#9 6.765   Downloading charset_normalizer-3.1.0-cp310-cp310-musllinux_1_1_x86_64.whl (192 kB)
+#9 7.002      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 192.8/192.8 kB 829.2 kB/s eta 0:00:00
+#9 7.346 Collecting urllib3<1.27,>=1.21.1
+#9 7.381   Downloading urllib3-1.26.15-py2.py3-none-any.whl (140 kB)
+#9 7.564      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 140.9/140.9 kB 748.6 kB/s eta 0:00:00
+#9 8.001 Installing collected packages: urllib3, idna, charset-normalizer, certifi, requests
+#9 9.911 Successfully installed certifi-2022.12.7 charset-normalizer-3.1.0 idna-3.4 requests-2.28.2 urllib3-1.26.15
+#9 9.914 WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv
+#9 DONE 11.2s
+
+#10 [6/7] RUN pip install gunicorn
+#10 4.735 Collecting gunicorn
+#10 5.067   Downloading gunicorn-20.1.0-py3-none-any.whl (79 kB)
+#10 5.284      ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 79.5/79.5 kB 352.3 kB/s eta 0:00:00
+#10 5.337 Requirement already satisfied: setuptools>=3.0 in /usr/lib/python3.10/site-packages (from gunicorn) (65.6.0)
+#10 5.534 Installing collected packages: gunicorn
+#10 6.020 Successfully installed gunicorn-20.1.0
+#10 6.022 WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv
+#10 DONE 7.4s
+
+#11 [7/7] RUN adduser -D userA
+#11 DONE 3.3s
+
+#12 exporting to image
+#12 exporting layers
+#12 exporting layers 4.7s done
+#12 writing image sha256:3ebe67995c664ddcb4b8e7dc9175a39e20337be94b48329877697170a6ec92e2 0.0s done
+#12 naming to registry.heroku.com/flask-trial/web
+#12 naming to registry.heroku.com/flask-trial/web 0.1s done
+#12 DONE 4.8s
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Push Image)
+[Pipeline] sh
++ docker push registry.heroku.com/flask-trial/web
+Using default tag: latest
+The push refers to repository [registry.heroku.com/flask-trial/web]
+4b31a5cfa62e: Preparing
+e3908bb6c37c: Preparing
+d8a8225dd784: Preparing
+50eb1911debf: Preparing
+527d0ca81476: Preparing
+9fc10edd7a1a: Preparing
+7cd52847ad77: Preparing
+9fc10edd7a1a: Waiting
+7cd52847ad77: Waiting
+4b31a5cfa62e: Pushed
+9fc10edd7a1a: Pushed
+e3908bb6c37c: Pushed
+7cd52847ad77: Layer already exists
+d8a8225dd784: Pushed
+50eb1911debf: Pushed
+527d0ca81476: Pushed
+latest: digest: sha256:b1b20a09bef7d2376133f36d0a9470f55852d046050dd2fc63ce66b3c353a599 size: 1789
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Deploy Container on Heroku)
+[Pipeline] sh
++ heroku container:release web --app flask-trial
+(node:2979) SyntaxError Plugin: heroku: /var/jenkins_home/.local/share/heroku/config.json: Unexpected string in JSON at position 72
+module: @oclif/config@1.18.3
+task: runHook prerun
+plugin: heroku
+root: /usr/lib/heroku
+See more details with DEBUG=*
+(Use `node --trace-warnings ...` to show where the warning was created)
+Releasing images web to flask-trial... done
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+Finished: SUCCESS
