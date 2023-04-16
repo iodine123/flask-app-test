@@ -17,9 +17,6 @@ pipeline{
                     python3 -m unittest flask-app-test/unit_test/apitest.py
                     """
             }
-            post{
-                sh "Success !"
-            }
         }
 
         stage("Build Image"){
